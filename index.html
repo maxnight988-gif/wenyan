@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#1b1510" />
+<title>文言虚词 · 义项训练</title>
+<style>
+  :root{
+    --bg:#14100c; --card:#211a14; --line:#3a2e24;
+    --ink:#f0e6d8; --dim:#a09080; --warm:#d9a15b;
+    --ok:#5f9a6a; --bad:#b4584a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:"Songti SC","STSong",'宋体',"Noto Serif SC",serif;
+    min-height:100dvh;display:flex;justify-content:center;
+    padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+  }
+  .app{width:100%;max-width:520px;padding:20px 18px 28px;display:flex;flex-direction:column;gap:14px}
+
+  header{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+  h1{font-size:20px;font-weight:600;letter-spacing:.06em}
+  .sub{font-size:11px;color:var(--dim);letter-spacing:.14em}
+
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 8px;text-align:center}
+  .stat b{display:block;font-size:19px;color:var(--warm);font-weight:600}
+  .stat span{font-size:10px;color:var(--dim)}
+
+  .btn{
+    border:1px solid var(--line);background:var(--card);color:var(--ink);
+    border-radius:10px;padding:13px;font:inherit;font-size:15px;cursor:pointer;
+    transition:background .2s,border-color .2s;
+  }
+  .btn:hover{border-color:var(--warm)}
+  .btn.primary{background:var(--warm);color:#1a1208;border-color:var(--warm);font-weight:600}
+  .btn.ghost{background:transparent;font-size:13px;color:var(--dim);padding:10px}
+  .row{display:flex;gap:10px}
+  .row .btn{flex:1}
+
+  /* 答题卡 */
+  .q{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .qhead{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);letter-spacing:.1em;margin-bottom:12px}
+  .char{font-size:44px;font-weight:600;line-height:1.1;color:#fff}
+  .char small{font-size:14px;color:var(--dim);margin-left:8px;letter-spacing:.1em}
+  .ex{font-size:19px;line-height:1.9;margin:12px 0 6px;letter-spacing:.04em}
+  .ex em{color:#ffd9a8;font-style:normal;font-weight:700;background:rgba(217,161,91,.22);padding:0 .16em;border-radius:4px;box-shadow:0 0 0 1px rgba(217,161,91,.25)}
+  .tr{margin-top:8px;font-size:13px;line-height:1.75;color:rgba(240,230,216,.62);letter-spacing:.02em}
+  .tr b{color:rgba(240,230,216,.8);font-weight:400}
+  .src{font-size:12px;color:var(--dim);letter-spacing:.06em}
+
+  .opts{display:flex;flex-direction:column;gap:9px;margin-top:16px}
+  .opt{
+    text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:10px;
+    padding:13px 14px;font:inherit;font-size:15px;color:var(--ink);cursor:pointer;
+    display:flex;gap:10px;align-items:baseline;transition:border-color .15s,background .15s;
+  }
+  .opt .k{color:var(--dim);font-size:12px;flex:0 0 18px}
+  .opt:hover{border-color:var(--warm)}
+  .opt.right{border-color:var(--ok);background:rgba(95,154,106,.12)}
+  .opt.wrong{border-color:var(--bad);background:rgba(180,88,74,.12)}
+  .opt:disabled{cursor:default}
+
+  .fb{margin-top:14px;padding:12px 14px;border-radius:10px;background:rgba(217,161,91,.08);border:1px solid rgba(217,161,91,.25);font-size:14px;line-height:1.8}
+  .fb b{color:var(--warm)}
+  .fb .sig{color:var(--dim);font-size:13px}
+
+  .conf{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  .conf h3{font-size:13px;color:var(--dim);font-weight:400;letter-spacing:.12em;margin-bottom:10px}
+  .conf ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+  .conf li{font-size:13px;line-height:1.6;color:#ddd0c0}
+  .conf li i{color:var(--bad);font-style:normal}
+
+  footer{margin-top:auto;display:flex;gap:10px}
+  footer .btn{flex:1;font-size:12px;padding:10px}
+  #fillInput:focus{outline:none;border-color:var(--warm)!important;box-shadow:0 0 0 3px rgba(217,161,91,.12)}
+  .hide{display:none!important}
+  .tag{font-size:10px;border:1px solid var(--line);border-radius:99px;padding:1px 7px;color:var(--dim);margin-left:6px}
+  .tag.warn{color:var(--bad);border-color:rgba(180,88,74,.4)}
+  .tag.hs{color:#7fa86b;border-color:rgba(127,168,107,.45)}
+  .seg{display:flex;gap:8px}
+  .seg button{flex:1;font-size:13px;padding:9px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--dim);cursor:pointer;font-family:inherit}
+  .seg button.on{color:var(--warm);border-color:var(--warm);background:rgba(217,161,91,.1)}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <header>
+    <h1>文言虚词 · 义项训练</h1>
+    <span class="sub" id="todayLabel"></span>
+  </header>
+
+  <!-- 首页 -->
+  <section id="home">
+    <div class="stats">
+      <div class="stat"><b id="sDue">0</b><span>待复习</span></div>
+      <div class="stat"><b id="sNew">0</b><span id="sNewLabel">新义项</span></div>
+      <div class="stat"><b id="sAcc">–</b><span>正确率</span></div>
+      <div class="stat"><b id="sTotal">0</b><span>累计作答</span></div>
+    </div>
+
+    <div class="seg" style="margin-top:4px">
+      <button id="mSense">义项训练</button>
+      <button id="mPat">句式判断</button>
+    </div>
+    <div class="seg">
+      <button id="fAll">全部（含初中补充）</button>
+      <button id="fHs">只考高中篇目</button>
+    </div>
+    <div class="row">
+      <button class="btn primary" id="startBtn">开始一组（20 张）</button>
+    </div>
+
+    <div class="conf" id="confBox">
+      <h3>最常混淆的两张卡</h3>
+      <ul id="confList"><li style="color:var(--dim)">还没有数据，先做一组</li></ul>
+    </div>
+
+    <div class="conf">
+      <h3>说明</h3>
+      <ul id="introList">
+        <li>每张卡考一个<b>义项</b>，不是考一个字。同一个「之」，五个义项是五张卡。</li>
+        <li>选项全部来自同一个字，模拟真实混淆。</li>
+        <li>答错会把两张卡重新排进队列，明天先考。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 答题 -->
+  <section id="quiz" class="hide">
+    <div class="q">
+      <div class="qhead">
+        <span id="qProgress">1 / 20</span>
+        <span id="qChar"></span>
+      </div>
+      <div class="char" id="qCharBig">之<small id="qFunc"></small></div>
+      <div class="ex" id="qEx"></div>
+      <div class="src" id="qSrc"></div>
+
+      <div class="opts" id="qOpts"></div>
+      <div class="fb hide" id="qFb"></div>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <button class="btn ghost" id="quitBtn">结束本组</button>
+      <button class="btn primary hide" id="nextBtn">下一题</button>
+    </div>
+  </section>
+
+  <!-- 结算 -->
+  <section id="done" class="hide">
+    <div class="conf">
+      <h3>本组完成</h3>
+      <ul id="doneList"></ul>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn primary" id="againBtn">再来一组</button>
+      <button class="btn" id="backBtn">回首页</button>
+    </div>
+  </section>
+
+  <footer>
+    <button class="btn ghost" id="exportBtn">导出进度</button>
+    <button class="btn ghost" id="importBtn">导入进度</button>
+    <button class="btn ghost" id="resetBtn">清空</button>
+  </footer>
+</div>
+
+<input type="file" id="fileInput" accept="application/json" class="hide" />
+
+<script>
+const DATA = {
+  "之": [
+    {g:"到，往", f:"动词", s:"后接处所名词", e:"项伯乃夜驰之沛公军", tt:"项伯于是连夜骑马〔到〕沛公军营", src:"《鸿门宴》", e2:"胡为乎遑遑欲何之", tt2:"为什么心神不定，想要〔去〕哪里", src2:"《归去来兮辞》", st:"高中"},
+    {g:"他，它", f:"代词", s:"动词后，无名词", e:"人非生而知之者", tt:"人不是生下来就懂得〔道理〕的", src:"《师说》", e2:"作《师说》以贻之", tt2:"写《师说》来赠给〔他〕", src2:"《师说》", st:"高中"},
+    {g:"的", f:"助词", s:"名词＋之＋名词", e:"古之学者必有师", tt:"古代〔的〕求学的人一定有老师", src:"《师说》", e2:"彼童子之师", tt2:"那些儿童〔的〕老师", src2:"《师说》", st:"高中"},
+    {g:"主谓之间，取消独立性", f:"助词", s:"之＋主谓短语", e:"师道之不传也久矣", tt:"从师学习的风尚不流传，已经很久了", src:"《师说》", e2:"欲人之无惑也难矣", tt2:"想要人没有疑惑，也很难啊", src2:"《师说》", st:"高中"},
+    {g:"宾语前置标志", f:"助词", s:"疑问代词或名词＋之＋动词", e:"句读之不知，惑之不解", tt:"不懂得断句，不能解决疑惑", src:"《师说》", e2:"夫晋，何厌之有", tt2:"晋国哪里有满足的时候", src2:"《烛之武退秦师》", st2:"高中", st:"高中"}
+  ],
+  "其": [
+    {g:"他（们）的", f:"代词", s:"后接名词", e:"其闻道也固先乎吾", tt:"他懂得道理本来就比我早", src:"《师说》", e2:"爱其子，择师而教之", tt2:"爱〔自己的〕孩子，选老师来教他", src2:"《师说》", st:"高中"},
+    {g:"那，那些", f:"指示代词", s:"指前文提到的一类", e:"其下圣人也亦远矣", tt:"〔那些〕不如圣人的人，差得也远了", src:"《师说》", e2:"其为惑也，终不解矣", tt2:"〔那些〕成为疑惑的，终究不能解决", src2:"《师说》", st:"高中"},
+    {g:"大概，表推测", f:"副词", s:"句首表估计", e:"其皆出于此乎", tt:"〔大概〕都出在这里吧", src:"《师说》", e2:"其真不知马也", tt2:"〔大概〕是真的不懂马吧", src2:"《马说》", st2:"初中", st:"高中"},
+    {g:"难道，表反问", f:"副词", s:"句首表反问", e:"其可怪也欤", tt:"〔难道〕值得奇怪吗", src:"《师说》", e2:"其孰能讥之乎", tt2:"〔难道〕谁能讥笑他呢", src2:"《游褒禅山记》", st:"高中"}
+  ],
+  "而": [
+    {g:"并且，表并列", f:"连词", s:"前后两项地位相当", e:"蟹六跪而二螯", tt:"螃蟹有六条腿〔和〕两只钳", src:"《劝学》", e2:"授之书而习其句读者", tt2:"教他读书〔并且〕学习断句的人", src2:"《师说》", st:"高中"},
+    {g:"地，表修饰", f:"连词", s:"前一动作修饰后一动作", e:"吾尝终日而思矣", tt:"我曾经整天地思考", src:"《劝学》", e2:"登高而招", tt2:"登上高处招手", src2:"《劝学》", st:"高中"},
+    {g:"却，表转折", f:"连词", s:"前后意思相反", e:"青，取之于蓝，而青于蓝", tt:"靛青从蓝草里提取，〔却〕比蓝草更青", src:"《劝学》", e2:"非能水也，而绝江河", tt2:"不是会游泳，〔却〕能横渡江河", src2:"《劝学》", st:"高中"},
+    {g:"就，表承接", f:"连词", s:"先有前事再有后事", e:"锲而舍之，朽木不折", tt:"一雕刻〔就〕放下，朽木也刻不断", src:"《劝学》", e2:"积善成德，而神明自得", tt2:"积累善行成为品德，〔就〕会心智澄明", src2:"《劝学》", st:"高中"},
+    {g:"如果，表假设", f:"连词", s:"后句是推论", e:"人而无信，不知其可也", tt:"人〔如果〕没有信用，不知道他行不行", src:"《论语·为政》", e2:"人而不仁，如礼何", tt2:"人〔如果〕不仁，把礼怎么办", src2:"《论语》十二章", st2:"高中", st:"初中"}
+  ],
+  "以": [
+    {g:"用，拿", f:"介词", s:"后接工具或手段", e:"举所佩玉玦以示之者三", tt:"举起佩带的玉玦〔来〕向项王示意三次", src:"《鸿门宴》", e2:"以刀劈狼首", tt2:"〔用〕刀劈砍狼头", src2:"《狼》", st2:"初中", st:"高中"},
+    {g:"因为", f:"连词", s:"后接原因", e:"不赂者以赂者丧", tt:"不贿赂的国家〔因为〕贿赂的国家而灭亡", src:"《六国论》", e2:"以中有足乐者", tt2:"〔因为〕心中有足以快乐的事", src2:"《送东阳马生序》", st2:"初中", st:"高中"},
+    {g:"来，表目的", f:"连词", s:"后接目的", e:"作《师说》以贻之", tt:"写《师说》来赠给〔他〕", src:"《师说》", e2:"焉用亡郑以陪邻", tt2:"〔哪里〕用得着灭郑来增加邻国", src2:"《烛之武退秦师》", st:"高中"},
+    {g:"认为", f:"动词", s:"「以……为……」句式", e:"百姓皆以王为爱也", tt:"百姓都〔认为〕大王吝啬", src:"《齐桓晋文之事》", e2:"皆以美于徐公", tt2:"都〔认为〕比徐公美", src2:"《邹忌讽齐王纳谏》", st2:"初中", st:"高中"},
+    {g:"凭着，凭借", f:"介词", s:"后接条件", e:"以区区之地，致万乘之势", tt:"〔凭着〕小小的地方，达到万乘的势力", src:"《过秦论》", e2:"以我酌油知之", tt2:"〔凭着〕我倒油知道这个道理", src2:"《卖油翁》", st2:"初中", st:"高中"}
+  ],
+  "于": [
+    {g:"在", f:"介词", s:"后接处所", e:"苏子与客泛舟游于赤壁之下", tt:"我和客人在赤壁之下泛舟", src:"《赤壁赋》", e2:"战于长勺", tt2:"〔在〕长勺作战", src2:"《曹刿论战》", st:"高中", st2:"初中"},
+    {g:"比", f:"介词", s:"用于比较", e:"青，取之于蓝，而青于蓝", tt:"靛青从蓝草里提取，〔却〕比蓝草更青", src:"《劝学》", e2:"冰，水为之，而寒于水", tt2:"冰是水凝成的，〔比〕水更冷", src2:"《劝学》", st:"高中"},
+    {g:"向", f:"介词", s:"后接求教或动作对象", e:"而耻学于师", tt:"却把〔向〕老师学习当作耻辱", src:"《师说》", e2:"学于余", tt2:"〔向〕我学习", src2:"《师说》", st:"高中"},
+    {g:"对于", f:"介词", s:"引出关涉对象", e:"于其身也，则耻师焉", tt:"〔对于〕他自己，却以从师为耻", src:"《师说》", e2:"万钟于我何加焉", tt2:"优厚的俸禄〔对于〕我有什么益处", src2:"《鱼我所欲也》", st2:"初中", st:"高中"}
+  ],
+  "为": [
+    {g:"替，给", f:"介词", s:"后接服务对象", e:"为长者折枝", tt:"〔替〕老人折根树枝", src:"《齐桓晋文之事》", e2:"为人谋而不忠乎", tt2:"〔替〕别人谋划却不尽心吗", src2:"《论语·学而》", st2:"初中", st:"高中"},
+    {g:"被", f:"介词", s:"引出施动者", e:"身死人手，为天下笑者", tt:"自己死在别人手里，〔被〕天下人耻笑", src:"《过秦论》", e2:"遂为猾胥报充里正役", tt2:"于是〔被〕狡猾的胥吏报充里正差役", src2:"《促织》", st:"高中"},
+    {g:"是", f:"动词", s:"表判断", e:"如今人方为刀俎，我为鱼肉", tt:"如今人家正是刀板，我〔是〕鱼肉", src:"《鸿门宴》", e2:"知之为知之，不知为不知", tt2:"懂〔是〕懂，不懂〔是〕不懂", src2:"《论语·为政》", st2:"初中", st:"高中"},
+    {g:"治理", f:"动词", s:"后接国家、政事", e:"为国以礼", tt:"〔治理〕国家要用礼", src:"《子路、曾皙、冉有、公西华侍坐》", e2:"为政以德", tt2:"〔治理〕政事要靠德行", src2:"《论语·为政》", st2:"初中", st:"高中"}
+  ],
+  "者": [
+    {g:"……的人／东西", f:"助词", s:"动词或形容词后", e:"假舆马者，非利足也", tt:"借助车马〔的人〕，不是脚走得快", src:"《劝学》", e2:"负者歌于途", tt2:"背着东西〔的人〕在路上唱歌", src2:"《醉翁亭记》", st2:"初中", st:"高中"},
+    {g:"判断句标志", f:"助词", s:"「……者，……也」", e:"师者，所以传道受业解惑也", tt:"老师，是靠他来传授道理、讲授学业、解答疑惑的人", src:"《师说》", e2:"陈胜者，阳城人也", tt2:"陈胜，是阳城人", src2:"《陈涉世家》", st2:"初中", st:"高中"},
+    {g:"停顿，引出下文", f:"助词", s:"人名或身份后停顿", e:"楚左尹项伯者，项羽季父也", tt:"楚国的左尹项伯，是项羽的叔父", src:"《鸿门宴》", e2:"亚父者，范增也", tt2:"亚父，就是范增", src2:"《鸿门宴》", st:"高中"}
+  ],
+  "也": [
+    {g:"……是……，判断语气", f:"语气词", s:"「……者，……也」句式", e:"师者，所以传道受业解惑也", tt:"老师，是靠他来传授道理、讲授学业、解答疑惑的人", src:"《师说》", e2:"此天子气也", tt2:"这是天子的云气", src2:"《鸿门宴》", st:"高中"},
+    {g:"句中停顿", f:"语气词", s:"主语后停顿，提醒下文", e:"师道之不传也久矣", tt:"从师学习的风尚不流传，已经很久了", src:"《师说》", e2:"其闻道也固先乎吾", tt2:"他懂得道理本来就比我早", src2:"《师说》", st:"高中"},
+    {g:"啊，感叹", f:"语气词", s:"句末表感叹或反问", e:"其可怪也欤", tt:"〔难道〕值得奇怪吗", src:"《师说》", e2:"身死人手，为天下笑者，何也", tt2:"自己死在别人手里，被天下人耻笑，是什么〔呢〕", src2:"《过秦论》", st:"高中"}
+  ],
+  "则": [
+    {g:"就，那么", f:"连词", s:"前有条件后有结果", e:"故木受绳则直", tt:"所以木材用墨线量过〔就〕直", src:"《劝学》", e2:"金就砺则利", tt2:"金属放在磨刀石上磨〔就〕锋利", src2:"《劝学》", st:"高中"},
+    {g:"就，表承接", f:"连词", s:"顺承前事", e:"则知明而行无过矣", tt:"〔就〕会智慧明达、行为没有过错了", src:"《劝学》", e2:"学而不思则罔", tt2:"只学不思考〔就〕迷惑", src2:"《论语·为政》", st2:"初中", st:"高中"},
+    {g:"却，表转折", f:"连词", s:"前后相反", e:"于其身也，则耻师焉", tt:"〔对于〕他自己，却以从师为耻", src:"《师说》", e2:"手裁举，则又超忽而跃", tt2:"手刚举起，〔却〕又忽地跳走了", src2:"《促织》", st2:"高中", st:"高中"}
+  ],
+  "乃": [
+    {g:"于是，就", f:"副词", s:"承接前事", e:"乃使蒙恬北筑长城", tt:"〔于是〕派蒙恬在北方修筑长城", src:"《过秦论》", e2:"乃入见", tt2:"〔于是〕进去拜见", src2:"《曹刿论战》", st2:"初中", st:"高中"},
+    {g:"才", f:"副词", s:"条件达成后才发生", e:"度我至军中，公乃入", tt:"估计我到了军营，你〔才〕进去", src:"《鸿门宴》", e2:"乃悟前狼假寐", tt2:"〔才〕明白前面那只狼是假装睡觉", src2:"《狼》", st2:"初中", st:"高中"},
+    {g:"竟然", f:"副词", s:"出乎意料", e:"今其智乃反不能及", tt:"如今他们的智慧〔竟然〕反而比不上", src:"《师说》", e2:"乃不知有汉，无论魏晋", tt2:"〔竟然〕不知道有过汉朝，更别说魏晋", src2:"《桃花源记》", st2:"初中", st:"高中"}
+  ],
+  "且": [
+    {g:"况且，而且", f:"连词", s:"递进，常作「且夫」", e:"且夫天地之间，物各有主", tt:"〔况且〕天地之间，万物各有主人", src:"《赤壁赋》", e2:"且壮士不死即已，死即举大名耳", tt2:"〔况且〕壮士不死就罢了，死就要成就大名", src2:"《陈涉世家》", st2:"初中", st:"高中"},
+    {g:"将要", f:"副词", s:"将来时", e:"若属皆且为所虏", tt:"你们这些人〔将要〕被他俘虏", src:"《鸿门宴》", e2:"吾今且报府", tt2:"我现在〔将要〕去官府报到", src2:"《孔雀东南飞》", st:"高中"},
+    {g:"尚且", f:"副词", s:"举轻例托重", e:"臣死且不避，卮酒安足辞", tt:"我连死〔尚且〕不躲避，一杯酒哪里值得推辞", src:"《鸿门宴》", e2:"且欲与常马等不可得", tt2:"〔尚且〕想和普通马一样都做不到", src2:"《马说》", st2:"初中", st:"高中"}
+  ],
+  "若": [
+    {g:"你", f:"代词", s:"第二人称，作主语", e:"若入前为寿", tt:"〔你〕进去上前祝寿", src:"《鸿门宴》", e2:"吾翁即若翁", tt2:"我父亲就是〔你〕父亲", src2:"《鸿门宴》", st:"高中"},
+    {g:"如果", f:"连词", s:"后接假设条件", e:"若亡郑而有益于君", tt:"〔如果〕灭掉郑国对您有好处", src:"《烛之武退秦师》", e2:"若使烛之武见秦君", tt2:"〔如果〕派烛之武去见秦君", src2:"《烛之武退秦师》", st:"高中"},
+    {g:"像，好像", f:"动词", s:"后接比喻对象", e:"仿佛若有光", tt:"仿佛〔像〕有光亮", src:"《桃花源记》", e2:"皆若空游无所依", tt2:"都〔像〕在空中游动，没有依靠", src2:"《小石潭记》", st2:"初中", st:"初中"}
+  ],
+  "所": [
+    {g:"所＋动词，……的东西／地方", f:"助词", s:"构成名词性短语", e:"道之所存，师之所存也", tt:"道理存在的地方，就是老师存在的地方", src:"《师说》", e2:"此人一一为具言所闻", tt2:"这个人一一向他们详细说了〔听到的〕", src2:"《桃花源记》", st2:"初中", st:"高中"},
+    {g:"为……所……，表被动", f:"助词", s:"「为」在前表被动", e:"若属皆且为所虏", tt:"你们这些人〔将要〕被他俘虏", src:"《鸿门宴》", e2:"遂为猾胥报充里正役", tt2:"于是〔被〕狡猾的胥吏报充里正差役", src2:"《促织》", st2:"高中", st:"高中"},
+    {g:"处所，地方", f:"名词", s:"作宾语或主语", e:"某所，而母立于兹", tt:"〔某处〕，你母亲站在这儿", src:"《项脊轩志》", e2:"又间令吴广之次所旁丛祠中", tt2:"又暗中派吴广到〔驻地〕旁边的丛祠里", src2:"《陈涉世家》", st2:"初中", st:"高中"}
+  ],
+  "与": [
+    {g:"和，跟", f:"连词", s:"连接并列项", e:"苏子与客泛舟游于赤壁之下", tt:"我和客人在赤壁之下泛舟", src:"《赤壁赋》", e2:"客亦知夫水与月乎", tt2:"你也知道那水〔和〕月亮吗", src2:"《赤壁赋》", st:"高中"},
+    {g:"给", f:"动词", s:"后接给予对象", e:"与尔三矢", tt:"〔给〕你三支箭", src:"《五代史伶官传序》", e2:"则与一生彘肩", tt2:"〔给〕了他一条生猪腿", src2:"《鸿门宴》", st:"高中"},
+    {g:"结交，亲附", f:"动词", s:"后接邦国或人", e:"与嬴而不助五国也", tt:"〔结交〕秦国却不帮助五国", src:"《六国论》", e2:"合从缔交，相与为一", tt2:"合纵结盟，互相〔结交〕成为一体", src2:"《过秦论》", st:"高中"}
+  ],
+  "因": [
+    {g:"于是，就", f:"连词", s:"承接前事", e:"项王即日因留沛公与饮", tt:"项王当天〔就〕留下沛公一起喝酒", src:"《鸿门宴》", e2:"因招樊哙出", tt2:"〔于是〕叫樊哙出来", src2:"《鸿门宴》", st:"高中"},
+    {g:"依照，顺着", f:"介词", s:"后接依据", e:"因利乘便", tt:"〔顺着〕有利形势，趁着便利", src:"《过秦论》", e2:"因遗策", tt2:"〔沿袭〕前代的策略", src2:"《过秦论》", st:"高中"},
+    {g:"趁着", f:"介词", s:"后接时机或形势", e:"因利乘便，宰割天下", tt:"〔趁着〕有利形势，宰割天下", src:"《过秦论》", e2:"因击沛公于坐", tt2:"〔趁机〕在座位上袭击沛公", src2:"《鸿门宴》", st2:"高中", st:"高中"}
+  ],
+  "乎": [
+    {g:"吧／吗，句末语气", f:"语气词", s:"句末表推测或疑问", e:"其皆出于此乎", tt:"〔大概〕都出在这里吧", src:"《师说》", e2:"其孰能讥之乎", tt2:"〔难道〕谁能讥笑他呢", src2:"《游褒禅山记》", st:"高中"},
+    {g:"相当于「于」", f:"介词", s:"后接处所或时间", e:"生乎吾前", tt:"出生〔在〕我之前", src:"《师说》", e2:"相与枕藉乎舟中", tt2:"互相枕着〔在〕船中", src2:"《赤壁赋》", st:"高中"},
+    {g:"……的样子，形容词词尾", f:"助词", s:"形容词后，表状态", e:"浩浩乎如冯虚御风", tt:"浩浩〔荡荡地〕像凌空驾风", src:"《赤壁赋》", e2:"飘飘乎如遗世独立", tt2:"飘飘〔然〕像脱离尘世", src2:"《赤壁赋》", st:"高中"}
+  ],
+  "焉": [
+    {g:"于此，在这里", f:"兼词", s:"句末，兼「于之」", e:"积土成山，风雨兴焉", tt:"堆积土成山，风雨〔从这里〕兴起", src:"《劝学》", e2:"积水成渊，蛟龙生焉", tt2:"积水成渊，蛟龙〔在这里〕生长", src2:"《劝学》", st:"高中"},
+    {g:"了／呢，句末语气", f:"语气词", s:"句末无实义", e:"或师焉，或不焉", tt:"有的向老师请教，有的不", src:"《师说》", e2:"犹且从师而问焉", tt2:"尚且跟从老师请教", src2:"《师说》", st:"高中"},
+    {g:"哪里", f:"疑问代词", s:"问处所", e:"且焉置土石", tt:"况且〔哪里〕放置土石", src:"《愚公移山》", e2:"焉用亡郑以陪邻", tt2:"〔哪里〕用得着灭郑来增加邻国", src2:"《烛之武退秦师》", st2:"高中", st:"初中"}
+  ],
+  "何": [
+    {g:"什么", f:"疑问代词", s:"作宾语，放动词前", e:"大王来何操", tt:"大王来时带了〔什么〕", src:"《鸿门宴》", e2:"何以战", tt2:"〔凭什么〕作战", src2:"《曹刿论战》", st2:"初中", st:"高中"},
+    {g:"为什么", f:"疑问副词", s:"问原因", e:"何苦而不平", tt:"〔为什么〕愁挖不平", src:"《愚公移山》", e2:"问君何能尔", tt2:"问君〔为什么〕能这样", src2:"《饮酒》", st2:"初中", st:"初中"},
+    {g:"多么", f:"程度副词", s:"修饰形容词", e:"水何澹澹", tt:"水〔多么〕荡漾", src:"《观沧海》", e2:"吏呼一何怒", tt2:"差役吼得〔多么〕愤怒", src2:"《石壕吏》", st2:"初中", st:"初中"}
+  ]
+};
+
+
+/* ============================================================
+   句式数据：每句标类型、标志、译文、出处
+   ============================================================ */
+const DATA2 = [
+  {t:"判断句", s:"师者，所以传道受业解惑也", mark:"……者，……也", tr:"老师，是靠他来传授道理、讲授学业、解答疑惑的人", src:"《师说》"},
+  {t:"判断句", s:"陈胜者，阳城人也", mark:"……者，……也", tr:"陈胜是阳城人", src:"《陈涉世家》"},
+  {t:"判断句", s:"此天子气也", mark:"……也", tr:"这是天子的云气", src:"《鸿门宴》"},
+  {t:"判断句", s:"是寡人之过也", mark:"……也", tr:"这是我的过错", src:"《烛之武退秦师》"},
+  {t:"判断句", s:"亚父者，范增也", mark:"……者，……也", tr:"亚父就是范增", src:"《鸿门宴》"},
+
+  {t:"被动句", s:"若属皆且为所虏", mark:"为……所", tr:"你们这些人都将被他俘虏", src:"《鸿门宴》"},
+  {t:"被动句", s:"身死人手，为天下笑者", mark:"为", tr:"自己死在别人手里，被天下人耻笑", src:"《过秦论》"},
+  {t:"被动句", s:"信而见疑，忠而被谤", mark:"见……　被", tr:"诚信却被怀疑，忠诚却被诽谤", src:"《屈原列传》"},
+  {t:"被动句", s:"遂为猾胥报充里正役", mark:"为", tr:"于是被狡猾的胥吏报充里正差役", src:"《促织》"},
+  {t:"被动句", s:"戍卒叫，函谷举", mark:"无标志（语意被动）", tr:"戍卒一声呼喊，函谷关就被攻下了", src:"《阿房宫赋》"},
+
+  {t:"宾语前置", s:"句读之不知，惑之不解", mark:"之", tr:"不懂得断句，不能解决疑惑", src:"《师说》", fix:"不知句读，不解惑"},
+  {t:"宾语前置", s:"夫晋，何厌之有", mark:"之", tr:"晋国哪里有满足的时候", src:"《烛之武退秦师》", fix:"有何厌（有什么满足）"},
+  {t:"宾语前置", s:"大王来何操", mark:"疑问代词作宾语", tr:"大王来时带了什么", src:"《鸿门宴》", fix:"大王来操何（带了什么）"},
+  {t:"宾语前置", s:"何以战", mark:"疑问代词作介词宾语", tr:"凭什么作战", src:"《曹刿论战》", fix:"以何战（凭什么）"},
+  {t:"宾语前置", s:"忌不自信", mark:"否定句代词作宾语", tr:"邹忌不相信自己", src:"《邹忌讽齐王纳谏》", fix:"忌不信自（不相信自己）"},
+
+  {t:"定语后置", s:"蚓无爪牙之利，筋骨之强", mark:"中心词＋之＋定语", tr:"蚯蚓没有锋利的爪牙、强健的筋骨", src:"《劝学》", fix:"蚓无利之爪牙、强之筋骨（锋利的爪牙、强健的筋骨）"},
+  {t:"定语后置", s:"马之千里者", mark:"中心词＋之＋定语＋者", tr:"日行千里的马", src:"《马说》", fix:"千里之马"},
+  {t:"定语后置", s:"客有吹洞箫者", mark:"中心词＋有……者", tr:"有位吹洞箫的客人", src:"《赤壁赋》", fix:"有吹洞箫之客"},
+  {t:"定语后置", s:"居庙堂之高则忧其民", mark:"中心词＋之＋定语", tr:"处在高高的庙堂上就担忧百姓", src:"《岳阳楼记》", fix:"居高庙堂（处在高高的庙堂上）"},
+  {t:"定语后置", s:"铸以为金人十二", mark:"数量词后置", tr:"铸成十二个铜人", src:"《过秦论》", fix:"铸以为十二金人"},
+
+  {t:"状语后置", s:"青，取之于蓝，而青于蓝", mark:"于", tr:"靛青从蓝草里提取，却比蓝草更青", src:"《劝学》", fix:"于蓝取之，而于蓝青（从蓝草中提取，比蓝草更青）"},
+  {t:"状语后置", s:"苏子与客泛舟游于赤壁之下", mark:"于", tr:"我和客人在赤壁之下泛舟", src:"《赤壁赋》", fix:"苏子与客于赤壁之下泛舟游"},
+  {t:"状语后置", s:"而耻学于师", mark:"于", tr:"却把向老师学习当作耻辱", src:"《师说》", fix:"耻于师学"},
+  {t:"状语后置", s:"咨臣以当世之事", mark:"以", tr:"拿当世的大事来询问我", src:"《出师表》", fix:"以当世之事咨臣"},
+  {t:"状语后置", s:"战于长勺", mark:"于", tr:"在长勺作战", src:"《曹刿论战》", fix:"于长勺战"},
+
+  {t:"省略句", s:"一鼓作气，再而衰，三而竭", mark:"省谓语「鼓」", tr:"第一次击鼓振作士气，第二次击鼓士气衰减，第三次击鼓士气竭尽", src:"《曹刿论战》", fix:"再（鼓）而衰，三（鼓）而竭"},
+  {t:"省略句", s:"将军战河北，臣战河南", mark:"省介词「于」", tr:"将军在黄河以北作战，我在黄河以南作战", src:"《鸿门宴》", fix:"战（于）河北 / 战（于）河南"},
+  {t:"省略句", s:"沛公军霸上", mark:"省介词「于」", tr:"沛公在霸上驻军", src:"《鸿门宴》", fix:"军（于）霸上"},
+  {t:"省略句", s:"竖子不足与谋", mark:"省宾语「之」", tr:"这小子不值得和他共谋大事", src:"《鸿门宴》", fix:"不足与（之）谋"},
+  {t:"省略句", s:"举所佩玉玦以示之者三", mark:"省主语", tr:"（他）举起佩带的玉玦向项王示意三次", src:"《鸿门宴》", fix:"（主语）举所佩玉玦以示之者三"},
+
+  {t:"固定句式", s:"如太行、王屋何", mark:"如……何", tr:"把太行、王屋两座山怎么样呢", src:"《愚公移山》", fix:"把太行、王屋怎么样"},
+  {t:"固定句式", s:"孰与君少长", mark:"孰与", tr:"跟你比，谁年纪大", src:"《鸿门宴》", fix:"与君孰少长（跟你比谁年纪大）"},
+  {t:"固定句式", s:"无乃不可乎", mark:"无乃……乎", tr:"恐怕不行吧", src:"《烛之武退秦师》", fix:"恐怕不可吧"},
+  {t:"固定句式", s:"得无教我猎虫所耶", mark:"得无……耶", tr:"莫非是告诉我捉虫的地方吧", src:"《促织》", fix:"莫非是教我捉虫的地方吧"},
+  {t:"固定句式", s:"不亦说乎", mark:"不亦……乎", tr:"不也很快乐吗", src:"《论语·学而》", fix:"不也说（悦）吗"},
+  {t:"固定句式", s:"何以伐为", mark:"何以……为", tr:"为什么要攻打它呢", src:"《论语》十二章", fix:"为何伐（为什么要攻打）"}
+];
+
+const TYPE_USE = {
+ "判断句": "翻译时补出「是」；断句时「者」「也」是天然的停顿点。看到「……者，……也」就是「……是……」。",
+ "被动句": "翻译时补出「被」，并注意主语是受事者——别把施动者和受动者译反。无标志的被动要靠语感判断。",
+ "宾语前置": "翻译时必须把宾语挪回动词后面。不还原就读不通，这是高考翻译的常见采分点。",
+ "定语后置": "翻译时把后置的定语挪回中心词前面。「爪牙之利」＝「锋利的爪牙」，顺序不还原就译反。",
+ "状语后置": "翻译时把「于/以」引出的介宾短语移到动词前面。「战于长勺」＝「在长勺作战」。",
+ "省略句": "翻译时必须把省略的成分补出来（加括号），漏补是最常见的扣分点。",
+ "固定句式": "整块套译，不能逐字译。「无乃……乎」＝「恐怕……吧」，「孰与」＝「跟……比谁……」。"
+};
+const TYPES = ["判断句","被动句","宾语前置","定语后置","状语后置","省略句","固定句式"];
+
+
+/* ============================================================
+   状态与调度
+   ============================================================ */
+const INTERVALS = [0.007, 1, 3, 7, 16, 35, 75];   // 天
+const STORE = "wy_sense_v1";
+const DAY = 86400000;
+
+let state = load();
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORE);
+    if (raw) {
+      const st = JSON.parse(raw);
+      if (!st.stat && (st.answered || st.right)) {
+        st.stat = { sense: { a: st.answered || 0, r: st.right || 0 }, pattern: { a: 0, r: 0 } };
+      }
+      return st;
+    }
+  } catch (e) {}
+  return { cards: {}, confusions: {}, filter: "all", mode: "sense" };
+}
+function save() { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} }
+
+function statBucket() {
+  if (!state.stat) state.stat = { sense: { a: 0, r: 0 }, pattern: { a: 0, r: 0 } };
+  if (!state.stat.sense) state.stat.sense = { a: 0, r: 0 };
+  if (!state.stat.pattern) state.stat.pattern = { a: 0, r: 0 };
+  return state.stat[state.mode === "pattern" ? "pattern" : "sense"];
+}
+function bump(ok) { const b = statBucket(); b.a++; if (ok) b.r++; }
+
+function cardState(id) { return state.cards[id] || { lv: 0, due: 0, seen: 0, wrong: 0 }; }
+
+function allCards() {
+  if (state.mode === "pattern") {
+    return DATA2.map((x, i) => Object.assign({ id: "S" + i, idx: i, kind: "pat" }, x));
+  }
+  const out = [];
+  for (const ch of Object.keys(DATA)) {
+    DATA[ch].forEach((x, i) => out.push(Object.assign({ id: ch + "#" + i, ch, idx: i, kind: "sense" }, x)));
+  }
+  return state.filter === "高中" ? out.filter(c => c.st === "高中") : out;
+}
+function dueCards() {
+  const now = Date.now();
+  return allCards().filter(c => { const st = cardState(c.id); return st.seen > 0 && st.due <= now; });
+}
+function newCards() { return allCards().filter(c => cardState(c.id).seen === 0); }
+
+function shuffle(a) { return a.slice().sort(() => Math.random() - 0.5); }
+
+/* ============================================================
+   出题
+   ============================================================ */
+function examplesOf(c) {
+  const a = [{ e: c.e, src: c.src, tt: c.tt || "" }];
+  if (c.e2) a.push({ e: c.e2, src: c.src2, tt: c.tt2 || "" });
+  return a;
+}
+function pickExample(c) { const a = examplesOf(c); return a[Math.floor(Math.random() * a.length)]; }
+
+/* tt 里〔〕标出目标词的译法：full 完整译文，mask 挖掉目标词 */
+function splitT(tt) {
+  const t = tt || "";
+  return {
+    full: t.replace(/〔(.*?)〕/g, "$1"),
+    mask: t.replace(/〔(.*?)〕/g, "＿＿"),
+    masked: /〔.*?〕/.test(t)
+  };
+}
+
+function makeQuestion(card) {
+  if (card.kind === "pat") {
+    const pool = TYPES.filter(t => t !== card.t);
+    const opts = shuffle(pool).slice(0, 3).map(t => ({ label: t, correct: false }));
+    opts.push({ label: card.t, correct: true });
+    return { card, type: "pat", opts: shuffle(opts) };
+  }
+
+  // 22% 填空，剩下的按 35% 反向
+  const r = Math.random();
+  if (r < 0.22) return { card, type: "fill", opts: [] };
+
+  const others = DATA[card.ch].map((x, i) => Object.assign({ i }, x)).filter(x => x.i !== card.idx);
+  if (r < 0.22 + 0.35 * 0.85 && others.length >= 2) {
+    const ex = pickExample(card);
+    const opts = shuffle(others).slice(0, 3).map(o => {
+      const e = pickExample(o);
+      return { label: e.e + "（" + e.src + "）", correct: false };
+    });
+    opts.push({ label: ex.e + "（" + ex.src + "）", correct: true });
+    return { card, type: "rev", opts: shuffle(opts) };
+  }
+  const opts = shuffle(others).slice(0, 3).map(o => ({ label: o.g, correct: false }));
+  opts.push({ label: card.g, correct: true });
+  return { card, type: "fwd", opts: shuffle(opts) };
+}
+
+/* ============================================================
+   界面
+   ============================================================ */
+const $ = id => document.getElementById(id);
+const show = id => ["home", "quiz", "done"].forEach(x => $(x).classList.toggle("hide", x !== id));
+
+function refreshHome() {
+  const d = new Date();
+  const pat = state.mode === "pattern";
+  $("todayLabel").textContent = d.getMonth() + 1 + " 月 " + d.getDate() + " 日 · " +
+    (pat ? "句式 " + DATA2.length + " 句" : Object.keys(DATA).length + " 字 " + allCards().length + " 义");
+  $("sNewLabel").textContent = pat ? "新句式" : "新义项";
+
+  $("introList").innerHTML = pat
+    ? "<li>每道题给一句古文，判断它属于<b>哪种句式</b>。</li>" +
+      "<li>七类：判断 / 被动 / 宾语前置 / 定语后置 / 状语后置 / 省略 / 固定句式。</li>" +
+      "<li>答完给<b>标志词、还原、译文、以及判断出来之后要做什么</b>。</li>"
+    : "<li>每张卡考一个<b>义项</b>，不是考一个字。同一个「之」，五个义项是五张卡。</li>" +
+      "<li>选项全部来自同一个字，模拟真实混淆。</li>" +
+      "<li>答错会把两张卡重新排进队列，明天先考。</li>";
+
+  const due = dueCards().length, nw = newCards().length;
+  $("sDue").textContent = due;
+  $("sNew").textContent = nw;
+  const b = statBucket();
+  $("sTotal").textContent = b.a;
+  $("sAcc").textContent = b.a ? Math.round(b.r / b.a * 100) + "%" : "–";
+
+  const pairs = Object.values(state.confusions || {}).sort((x, y) => y.n - x.n).slice(0, 3);
+  $("confList").innerHTML = pairs.length
+    ? pairs.map(p => '<li>「' + p.ch + "」的 <b>" + p.correct + "</b> 被你选成 <i>" + p.chosen + "</i> · " + p.n + " 次</li>").join("")
+    : '<li style="color:var(--dim)">还没有数据，先做一组</li>';
+}
+
+function syncFilter() {
+  const pat = state.mode === "pattern";
+  $("mSense").classList.toggle("on", !pat);
+  $("mPat").classList.toggle("on", pat);
+  $("fAll").classList.toggle("on", !pat && state.filter !== "高中");
+  $("fHs").classList.toggle("on", !pat && state.filter === "高中");
+  $("fAll").style.opacity = pat ? ".35" : "1";
+  $("fHs").style.opacity = pat ? ".35" : "1";
+  refreshHome();
+}
+
+/* ---------- 出题卡渲染 ---------- */
+function renderQuestion() {
+  const q = session.queue[session.i];
+  if (!q) return finish();
+  const c = q.card;
+
+  $("qProgress").textContent = (session.i + 1) + " / " + session.queue.length;
+  $("qFb").classList.add("hide");
+  $("nextBtn").classList.add("hide");
+  const box = $("qOpts");
+  box.innerHTML = "";
+
+  if (q.type === "pat") {
+    $("qChar").innerHTML = "句式 · 第 " + (c.idx + 1) + " 句";
+    $("qCharBig").innerHTML = "";
+    $("qEx").innerHTML = c.s;
+    $("qSrc").innerHTML = c.src + '<div class="tr">这句属于哪种句式？（答完给你「还原」和「有什么用」）</div>';
+    q.opts.forEach((o, k) => {
+      const b = document.createElement("button");
+      b.className = "opt";
+      b.innerHTML = '<span class="k">' + "ABCD"[k] + '</span><span>' + o.label + "</span>";
+      b.onclick = () => answer(o, b);
+      box.appendChild(b);
+    });
+    return;
+  }
+
+  $("qChar").innerHTML = c.ch + " · 第 " + (c.idx + 1) + " 义" +
+    '<span class="tag ' + (c.st === "高中" ? "hs" : "") + '">' + c.st + "</span>" +
+    (c.v === false ? '<span class="tag warn">待核</span>' : "");
+  $("qCharBig").innerHTML = c.ch + '<small>' + c.f + '</small>';
+
+  if (q.type === "rev") {
+    $("qEx").innerHTML = "「" + c.g + "」";
+    $("qSrc").innerHTML = "下面哪一句用了这个义项？（答完给译文）";
+  } else {
+    const ex = q.shown || (q.shown = pickExample(c));
+    const T = splitT(ex.tt);
+    $("qEx").innerHTML = q.type === "fill"
+      ? ex.e.split(c.ch).join("<em>＿＿</em>")
+      : ex.e.split(c.ch).join("<em>" + c.ch + "</em>");
+    $("qSrc").innerHTML = ex.src +
+      (T.full ? '<div class="tr">大意：' + (T.masked ? T.mask : T.full) + "</div>" : "") +
+      (q.type === "fill" ? '<div class="tr">——这个字在这里是什么意思？</div>' : "");
+  }
+
+  if (q.type === "fill") {
+    box.innerHTML =
+      '<div style="display:flex;gap:8px">' +
+        '<input id="fillInput" placeholder="写义项，如：到、往" autocomplete="off" ' +
+        'style="flex:1;background:var(--bg);border:1px solid var(--line);border-radius:10px;' +
+        'padding:12px 14px;font:inherit;font-size:15px;color:var(--ink)" />' +
+        '<button class="btn" id="fillOk" style="padding:12px 18px">提交</button>' +
+      "</div>";
+    const input = $("fillInput");
+    if (input) {
+      input.focus();
+      input.addEventListener("keydown", e => { if (e.key === "Enter") checkFill(q, input.value); });
+    }
+    $("fillOk").onclick = () => checkFill(q, $("fillInput").value);
+    return;
+  }
+
+  q.opts.forEach((o, k) => {
+    const b = document.createElement("button");
+    b.className = "opt";
+    b.innerHTML = '<span class="k">' + "ABCD"[k] + '</span><span>' + o.label + "</span>";
+    b.onclick = () => answer(o, b);
+    box.appendChild(b);
+  });
+}
+
+/* ---------- 评分后的公共收尾 ---------- */
+function settle(card, ok) {
+  const st = cardState(card.id);
+  st.seen++;
+  if (ok) {
+    st.lv = Math.min(st.lv + 1, INTERVALS.length - 1);
+    st.due = Date.now() + INTERVALS[st.lv] * DAY;
+  } else {
+    st.lv = 0; st.wrong++;
+    st.due = Date.now() + 10 * 60000;
+  }
+  state.cards[card.id] = st;
+  bump(ok);
+  session[ok ? "right" : "wrong"]++;
+  save();
+  $("nextBtn").classList.remove("hide");
+  $("nextBtn").onclick = () => { session.i++; renderQuestion(); };
+}
+
+function exampleLines(card, exclude) {
+  const list = examplesOf(card).filter(x => x.e !== exclude);
+  if (!list.length) return "";
+  return list.slice(0, 2).map(function (x, i) {
+    const T = splitT(x.tt);
+    return '<div class="sig">' + (i === 0 ? "例句：" : "另一个例子：") + x.e + "（" + x.src + "）" +
+      (T.full ? "　<b>译文：</b>" + T.full : "") + "</div>";
+  }).join("");
+}
+
+/* ---------- 选择题作答 ---------- */
+function answer(opt, btn) {
+  const q = session.queue[session.i];
+  const card = q.card;
+  const ok = !!opt.correct;
+  [...$("qOpts").children].forEach((el, k) => {
+    el.disabled = true;
+    if (q.opts[k] && q.opts[k].correct) el.classList.add("right");
+  });
+  if (!ok) btn.classList.add("wrong");
+
+  const fb = $("qFb");
+
+  if (q.type === "pat") {
+    session.records.push({ type: "pat", ok: ok, t: card.t, s: card.s, chosen: opt.label });
+    fb.classList.remove("hide");
+    fb.innerHTML = (ok ? "<b>对了。</b>" : "<b>不对。</b>") + "这句是「" + card.t + "」" +
+      '<div class="sig">标志：' + card.mark + "</div>" +
+      (card.fix ? '<div class="sig">还原：' + card.fix + "</div>" : "") +
+      '<div class="sig"><b>译文：</b>' + card.tr + "（" + card.src + "）</div>" +
+      (TYPE_USE[card.t] ? '<div class="sig" style="margin-top:6px;color:var(--warm)"><b>判断它有什么用：</b>' + TYPE_USE[card.t] + "</div>" : "");
+    settle(card, ok);
+    return;
+  }
+
+  let chosenG = opt.label;
+  if (q.type === "rev") {
+    const senses = DATA[card.ch];
+    const idx = senses.findIndex(x => (x.e && opt.label.indexOf(x.e) === 0) || (x.e2 && opt.label.indexOf(x.e2) === 0));
+    if (idx >= 0) chosenG = senses[idx].g;
+  }
+  if (!ok) {
+    const key = card.ch + "|" + card.idx + "|" + chosenG;
+    const rec = state.confusions[key] || { ch: card.ch, correct: card.g, chosen: chosenG, n: 0 };
+    rec.n++; state.confusions[key] = rec;
+  }
+  session.records.push({ type: q.type, ok: ok, ch: card.ch, g: card.g, chosen: chosenG });
+
+  const shownEx = q.shown ? q.shown.e : null;
+  const shownT = q.shown ? splitT(q.shown.tt).full : "";
+  fb.classList.remove("hide");
+  fb.innerHTML = (ok ? "<b>对了。</b>" : "<b>不对。</b>") + "这个义项是「" + card.g + "」" +
+    (ok ? "" : '<div class="sig">你选的是「' + chosenG + "」</div>") +
+    '<div class="sig">判断信号：' + card.s + "</div>" +
+    (q.type === "rev" ? exampleLines(card, null)
+                      : (shownT ? '<div class="sig"><b>译文：</b>' + shownT + "</div>" : "") + exampleLines(card, shownEx));
+  settle(card, ok);
+}
+
+/* ---------- 填空判分 ---------- */
+const SYN = { "去": ["往", "到"], "由于": ["因为"], "拿": ["用"], "被": ["为"], "给": ["为", "与"] };
+function gradeFill(card, input) {
+  const ans = String(input || "").trim();
+  if (!ans) return false;
+  const keys = (card.g || "").split(/[，、,／/（）()\s]+/).filter(t => t.length >= 1);
+  for (const k of keys) {
+    if (ans.indexOf(k) >= 0) return true;
+    if (k.indexOf(ans) >= 0) return true;
+    for (const t of (SYN[k] || [])) if (ans.indexOf(t) >= 0) return true;
+  }
+  return false;
+}
+
+function checkFill(q, value) {
+  const card = q.card;
+  const ok = gradeFill(card, value);
+  const input = $("fillInput");
+  if (input) { input.disabled = true; input.style.borderColor = ok ? "var(--ok)" : "var(--bad)"; }
+  const btn = $("fillOk");
+  if (btn) { btn.disabled = true; btn.textContent = ok ? "✓" : "✗"; }
+
+  session.records.push({ type: "fill", ok: ok, ch: card.ch, g: card.g, chosen: value || "（空）" });
+  if (!ok) {
+    const key = card.ch + "|" + card.idx + "|fill";
+    const rec = state.confusions[key] || { ch: card.ch, correct: card.g, chosen: "填空：" + (value || "（空）"), n: 0 };
+    rec.n++; state.confusions[key] = rec;
+  }
+
+  const fb = $("qFb");
+  fb.classList.remove("hide");
+  fb.innerHTML = (ok ? "<b>对了。</b>" : "<b>不对。</b>") + "这个义项是「" + card.g + "」" +
+    '<div class="sig">判断信号：' + card.s + (value ? "　你写的是：「" + value + "」" : "") + "</div>" +
+    (q.shown ? '<div class="sig"><b>译文：</b>' + splitT(q.shown.tt).full + "</div>" : "") +
+    exampleLines(card, q.shown ? q.shown.e : null);
+  settle(card, ok);
+}
+
+/* ---------- 组末报告 ---------- */
+function finish() {
+  show("done");
+  const r = session.records;
+  const total = r.length;
+  const right = r.filter(x => x.ok).length;
+  const secs = Math.max(1, Math.round((Date.now() - session.startAt) / 1000));
+  const mm = Math.floor(secs / 60), ss = secs % 60;
+  const pct = v => Math.round(v * 100) + "%";
+  const label = { fwd: "正向（句→义）", rev: "反向（义→句）", fill: "填空（自己写）", pat: "句式判断" };
+
+  const byType = {};
+  r.forEach(x => { const t = byType[x.type] || (byType[x.type] = { n: 0, ok: 0 }); t.n++; if (x.ok) t.ok++; });
+
+  const byChar = {};
+  r.filter(x => !x.ok).forEach(x => {
+    const key = x.type === "pat" ? x.t : x.ch;
+    if (key) byChar[key] = (byChar[key] || 0) + 1;
+  });
+  const worst = Object.entries(byChar).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const errs = r.filter(x => !x.ok);
+
+  let html = '<li style="font-size:15px;color:#f0e6d8">本组 ' + total + " 题 · 答对 " + right +
+    "（" + pct(total ? right / total : 0) + "）· 用时 " + (mm ? mm + " 分 " : "") + ss + " 秒</li>";
+
+  html += '<li style="margin-top:10px;color:var(--dim);font-size:12px">按题型</li>';
+  Object.keys(byType).forEach(k => {
+    const t = byType[k];
+    html += "<li>" + (label[k] || k) + "　" + t.n + " 题，对 " + t.ok + "（" + pct(t.ok / t.n) + "）</li>";
+  });
+
+  if (worst.length) {
+    html += '<li style="margin-top:10px;color:var(--dim);font-size:12px">' +
+      (state.mode === "pattern" ? "错得最多的类型" : "错得最多的字") + "</li>";
+    worst.forEach(([k, n]) => { html += "<li>「" + k + "」错 " + n + " 次</li>"; });
+  }
+
+  if (errs.length) {
+    html += '<li style="margin-top:10px;color:var(--dim);font-size:12px">本组错题（' + errs.length + "）</li>";
+    errs.slice(0, 12).forEach(x => {
+      html += x.type === "pat"
+        ? '<li>「' + x.t + "」" + x.s + "　你答：" + String(x.chosen).slice(0, 12) + "</li>"
+        : '<li>「' + x.ch + "」<b>" + x.g + "</b>　你答：" + String(x.chosen).slice(0, 18) + "</li>";
+    });
+    html += '<li style="margin-top:10px;color:var(--dim);font-size:12px">说明</li>' +
+      "<li>错题 10 分钟后到期，下一组会先出现——这是间隔重复的安排，不是重来。</li>";
+  } else {
+    html += '<li style="margin-top:10px;color:var(--ok)">全对，这一组没有错题。</li>';
+  }
+
+  const advice = [];
+  const keys = Object.keys(byType);
+  if (keys.length >= 2) {
+    const w = keys.map(k => [k, byType[k].ok / byType[k].n]).sort((a, b) => a[1] - b[1])[0];
+    if (w[1] < 0.8) advice.push("「" + (label[w[0]] || w[0]) + "」正确率 " + pct(w[1]) + "，是这组最弱的一环");
+  }
+  if (worst.length && worst[0][1] >= 2) {
+    advice.push("「" + worst[0][0] + "」错了 " + worst[0][1] + " 次，建议单独梳一遍");
+  }
+  if (right === total && total >= 10) advice.push("这组全对——可以加题量或换「只考高中」");
+  if (!advice.length) advice.push("这组看不出明显短板，保持节奏");
+
+  html += '<li style="margin-top:10px;color:var(--dim);font-size:12px">建议</li>';
+  advice.forEach(a => { html += "<li>· " + a + "</li>"; });
+
+  $("doneList").innerHTML = html;
+  refreshHome();
+}
+
+/* ---------- 开一组 ---------- */
+let session = null;
+function startSession(size) {
+  const due = shuffle(dueCards());
+  const nw = shuffle(newCards());
+  const picked = [], perChar = {};
+  for (const c of [...due, ...nw]) {
+    if (picked.length >= size) break;
+    if (c.ch) {
+      if ((perChar[c.ch] || 0) >= 2) continue;
+      perChar[c.ch] = (perChar[c.ch] || 0) + 1;
+    }
+    picked.push(c);
+  }
+  if (!picked.length) {
+    alert("全部卡片都在等待复习时间。想加练，点「清空」会重新开始。");
+    return;
+  }
+  session = { queue: picked.map(makeQuestion), i: 0, right: 0, wrong: 0, wrongList: [], startAt: Date.now(), records: [] };
+  show("quiz");
+  renderQuestion();
+}
+
+/* ---------- 事件 ---------- */
+$("mSense").onclick = () => { state.mode = "sense"; save(); syncFilter(); };
+$("mPat").onclick = () => { state.mode = "pattern"; save(); syncFilter(); };
+$("fAll").onclick = () => { state.filter = "all"; save(); syncFilter(); };
+$("fHs").onclick = () => { state.filter = "高中"; save(); syncFilter(); };
+$("startBtn").onclick = () => startSession(20);
+$("againBtn").onclick = () => startSession(20);
+$("backBtn").onclick = () => { refreshHome(); show("home"); };
+$("quitBtn").onclick = () => { if (session) finish(); };
+
+$("exportBtn").onclick = () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "文言进度-" + new Date().toISOString().slice(0, 10) + ".json";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 3000);
+};
+$("importBtn").onclick = () => $("fileInput").click();
+$("fileInput").onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if (!d.cards) throw new Error("格式不对");
+      state = d; save(); syncFilter();
+      alert("已导入");
+    } catch (err) { alert("导入失败：" + err.message); }
+  };
+  r.readAsText(f);
+};
+$("resetBtn").onclick = () => {
+  if (!confirm("清空所有进度？导出过备份再清。")) return;
+  state = { cards: {}, confusions: {}, filter: "all", mode: state.mode || "sense" };
+  save(); syncFilter();
+};
+
+syncFilter();
+
+</script>
+</body>
+</html>
