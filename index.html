@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#1b1510" />
+<meta name="theme-color" content="#14100c" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="文言虚词" />
+<meta name="application-name" content="文言虚词" />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
 <title>文言虚词 · 义项训练</title>
 <style>
   :root{
@@ -824,6 +831,14 @@ $("resetBtn").onclick = () => {
 };
 
 syncFilter();
+
+/* 装到主屏幕后离线也能用；file:// 直接双击打开时不注册 */
+if ("serviceWorker" in navigator &&
+    (location.protocol === "https:" || /^(localhost|127\.0\.0\.1)$/.test(location.hostname))) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("./sw.js").catch(function () {});
+  });
+}
 
 </script>
 </body>
